@@ -5,7 +5,7 @@ namespace Api.Endpoints;
 
 public class QuestionEndpoints
 {
-    public static async Task Map(WebApplication app)
+    public static void Map(WebApplication app)
     {
         var questions = app.MapGroup("/questions");
         questions.MapGet("/", async (QuizLiveDb db) =>

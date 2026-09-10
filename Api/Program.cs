@@ -16,5 +16,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 QuestionEndpoints.Map(app);
+PlayerEndpoints.Map(app);
 
 app.Run();

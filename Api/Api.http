@@ -1,6 +1,6 @@
 @host = http://localhost:5277
 
-GET {{host}}/
+GET {{host}}/questions
 Accept: application/json
 
 ####
@@ -25,3 +25,35 @@ Content-Type: application/json
 {
   "text": "What is the capital of England?"
 }
+
+###
+
+GET {{host}}/players
+Accept: application/json
+
+###
+
+POST {{host}}/players
+Content-Type: application/json
+
+{
+  "name": "Tyler"
+}
+
+###
+
+GET {{host}}/players/1
+Accept: application/json
+
+###
+
+PUT {{host}}/players/1
+Content-Type: application/json
+
+{
+  "name":"Tyler B"
+}
+
+###
+
+DELETE {{host}}/players/1
