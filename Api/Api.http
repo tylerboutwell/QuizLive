@@ -1,6 +1,27 @@
-@Api_HostAddress = http://localhost:5277
+@host = http://localhost:5277
 
-GET {{Api_HostAddress}}/weatherforecast/
+GET {{host}}/
 Accept: application/json
 
-###
+####
+
+POST {{host}}/
+Content-Type: application/json
+
+{
+  "text": "What is the capital of France?"
+}
+
+####
+
+DELETE {{host}}/1
+
+####
+
+
+PUT {{host}}/2
+Content-Type: application/json
+
+{
+  "text": "What is the capital of England?"
+}
