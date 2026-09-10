@@ -7,27 +7,28 @@ public class QuestionEndpoints
 {
     public static async Task Map(WebApplication app)
     {
-        app.MapGet("/", async (QuizLiveDb db) =>
+        var questions = app.MapGroup("/questions");
+        questions.MapGet("/", async (QuizLiveDb db) =>
         {
             var questions = await db.Questions.ToListAsync();
 
             return Results.Ok(questions);
         });
-        app.MapGet("/{id}", async (int id, QuizLiveDb db) =>
+        questions.MapGet("/{id}", async (int id, QuizLiveDb db) =>
             await db.Questions.FindAsync(id)
                 is Question question
                 ? Results.Ok(question)
                 : Results.NotFound());
-        
 
-        app.MapPost("/", async (Question question,QuizLiveDb db) =>
+
+        questions.MapPost("/", async (Question question,QuizLiveDb db) =>
         {
             db.Add(question);
             await db.SaveChangesAsync();
             return Results.Created($"/{question.Id}", question);
         });
 
-        app.MapPut("/{id}", async (int id, Question inputQuestion, QuizLiveDb db) =>
+        questions.MapPut("/{id}", async (int id, Question inputQuestion, QuizLiveDb db) =>
         {
             var question = await db.Questions.FindAsync(id);
             if (question is null) return Results.NotFound();
@@ -42,7 +43,7 @@ public class QuestionEndpoints
             return Results.NoContent();
         });
 
-        app.MapDelete("/{id}", async (int id, QuizLiveDb db) =>
+        questions.MapDelete("/{id}", async (int id, QuizLiveDb db) =>
         {
             if (await db.Questions.FindAsync(id) is Question question)
             {
