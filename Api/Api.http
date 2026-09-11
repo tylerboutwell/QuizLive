@@ -26,3 +26,30 @@ Content-Type: application/json
   "text": "What is the capital of England?"
 }
 
+###
+
+GET {{host}}/quizzes
+Accept: application/json
+
+####
+
+POST {{host}}/quizzes
+Content-Type: application/json
+
+{
+  "title": "Easy quiz!"
+}
+
+####
+
+DELETE {{host}}/quizzes/1
+
+####
+
+
+PUT {{host}}/1
+Content-Type: application/json
+
+{
+  "title": "Hard quiz!?"
+}
