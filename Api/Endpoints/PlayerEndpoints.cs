@@ -1,4 +1,5 @@
 ﻿using Api.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Endpoints
@@ -8,46 +9,46 @@ namespace Api.Endpoints
         public static void Map(WebApplication app)
         {
             var questions = app.MapGroup("/players");
-            questions.MapGet("/", async (QuizLiveDb db) =>
+            questions.MapGet("/", async Task<Ok<List<Player>>> (QuizLiveDb db) =>
             {
                 var questions = await db.Players.ToListAsync();
 
-                return Results.Ok(questions);
+                return TypedResults.Ok(questions);
             });
-            questions.MapGet("/{id}", async (int id, QuizLiveDb db) =>
+            questions.MapGet("/{id}", async Task<Results<Ok<Player>, NotFound>> (int id, QuizLiveDb db) =>
                 await db.Players.FindAsync(id)
                     is Player player
-                    ? Results.Ok(player)
-                    : Results.NotFound());
+                    ? TypedResults.Ok(player)
+                    : TypedResults.NotFound());
 
 
-            questions.MapPost("/", async (Player player, QuizLiveDb db) =>
+            questions.MapPost("/", async Task<Created<Player>> (Player player, QuizLiveDb db) =>
             {
                 db.Add(player);
                 await db.SaveChangesAsync();
-                return Results.Created($"/{player.Id}", player);
+                return TypedResults.Created($"/{player.Id}", player);
             });
 
-            questions.MapPut("/{id}", async (int id, Player inputPlayer, QuizLiveDb db) =>
+            questions.MapPut("/{id}", async Task<Results<NotFound, NoContent>> (int id, Player inputPlayer, QuizLiveDb db) =>
             {
                 var player = await db.Players.FindAsync(id);
-                if (player is null) return Results.NotFound();
+                if (player is null) return TypedResults.NotFound();
                 player.Name = inputPlayer.Name;
                 player.Score = inputPlayer.Score;
 
                 await db.SaveChangesAsync();
-                return Results.NoContent();
+                return TypedResults.NoContent();
             });
 
-            questions.MapDelete("/{id}", async (int id, QuizLiveDb db) =>
+            questions.MapDelete("/{id}", async Task<Results<NoContent, NotFound>> (int id, QuizLiveDb db) =>
             {
                 if (await db.Players.FindAsync(id) is Player player)
                 {
                     db.Players.Remove(player);
                     await db.SaveChangesAsync();
-                    return Results.NoContent();
+                    return TypedResults.NoContent();
                 }
-                return Results.NotFound();
+                return TypedResults.NotFound();
             });
         }
     }
