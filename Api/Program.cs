@@ -17,5 +17,6 @@ app.UseHttpsRedirection();
 
 QuestionEndpoints.Map(app);
 PlayerEndpoints.Map(app);
+QuizEndpoints.Map(app);
 
 app.Run();
