@@ -33,7 +33,7 @@ public class QuestionEndpoints
 
         static async Task<Created<Question>> CreateQuestion(Question question,QuizLiveDb db)
         {
-            db.Add(question);
+            db.Questions.Add(question);
             await db.SaveChangesAsync();
             return TypedResults.Created($"/{question.Id}", question);
         };
