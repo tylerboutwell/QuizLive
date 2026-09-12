@@ -9,28 +9,36 @@ public class QuestionEndpoints
     public static void Map(WebApplication app)
     {
         var questions = app.MapGroup("/questions");
-        questions.MapGet("/", async Task<Ok<List<Question>>> (QuizLiveDb db) =>
+
+        questions.MapGet("/", GetQuestions);
+        questions.MapGet("/{id}", GetQuestion);
+        questions.MapPost("/", CreateQuestion);
+        questions.MapPut("/{id}", UpdateQuestion);
+        questions.MapDelete("/{id}", DeleteQuestion);
+
+        static async Task<Ok<List<Question>>> GetQuestions(QuizLiveDb db)
         {
             var questions = await db.Questions.ToListAsync();
 
             return TypedResults.Ok(questions);
-        });
+        };
 
-        questions.MapGet("/{id}", async Task<Results<Ok<Question>, NotFound>> (int id, QuizLiveDb db) =>
-            await db.Questions.FindAsync(id)
+        static async Task<Results<Ok<Question>, NotFound>> GetQuestion(int id, QuizLiveDb db)
+        {
+            return await db.Questions.FindAsync(id)
                 is Question question
                 ? TypedResults.Ok(question)
-                : TypedResults.NotFound());
+                : TypedResults.NotFound();
+        };
 
-
-        questions.MapPost("/", async Task<Created<Question>> (Question question,QuizLiveDb db) =>
+        static async Task<Created<Question>> CreateQuestion(Question question,QuizLiveDb db)
         {
             db.Add(question);
             await db.SaveChangesAsync();
             return TypedResults.Created($"/{question.Id}", question);
-        });
+        };
 
-        questions.MapPut("/{id}", async Task<Results<NotFound, NoContent>> (int id, Question inputQuestion, QuizLiveDb db) =>
+        static async Task<Results<NotFound, NoContent>> UpdateQuestion(int id, Question inputQuestion, QuizLiveDb db)
         {
             var question = await db.Questions.FindAsync(id);
             if (question is null) return TypedResults.NotFound();
@@ -43,9 +51,9 @@ public class QuestionEndpoints
 
             await db.SaveChangesAsync();
             return TypedResults.NoContent();
-        });
+        };
 
-        questions.MapDelete("/{id}", async Task<Results<NoContent, NotFound>> (int id, QuizLiveDb db) =>
+        static async Task<Results<NoContent, NotFound>> DeleteQuestion(int id, QuizLiveDb db)
         {
             if (await db.Questions.FindAsync(id) is Question question)
             {
@@ -54,6 +62,6 @@ public class QuestionEndpoints
                 return TypedResults.NoContent();
             }
             return TypedResults.NotFound();
-        });
+        };
     }
 }
