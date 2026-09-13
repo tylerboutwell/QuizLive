@@ -36,7 +36,7 @@ namespace Api.Endpoints
             {
                 db.Players.Add(player);
                 await db.SaveChangesAsync();
-                return TypedResults.Created($"/{player.Id}", player);
+                return TypedResults.Created($"/players/{player.Id}", player);
             };
 
             static async Task<Results<NotFound, NoContent>> UpdatePlayer(int id, Player inputPlayer, QuizLiveDb db)

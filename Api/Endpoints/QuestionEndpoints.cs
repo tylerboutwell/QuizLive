@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Api.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Api.DTOs;
 
 namespace Api.Endpoints;
 
@@ -16,29 +17,27 @@ public class QuestionEndpoints
         questions.MapPut("/{id}", UpdateQuestion);
         questions.MapDelete("/{id}", DeleteQuestion);
 
-        static async Task<Ok<List<Question>>> GetQuestions(QuizLiveDb db)
+        static async Task<IResult> GetQuestions(QuizLiveDb db)
         {
-            var questions = await db.Questions.ToListAsync();
-
-            return TypedResults.Ok(questions);
+           return TypedResults.Ok(await db.Questions.Select(x => new QuestionDTO(x)).ToArrayAsync());
         };
 
-        static async Task<Results<Ok<Question>, NotFound>> GetQuestion(int id, QuizLiveDb db)
+        static async Task<IResult> GetQuestion(int id, QuizLiveDb db)
         {
             return await db.Questions.FindAsync(id)
                 is Question question
-                ? TypedResults.Ok(question)
+                ? TypedResults.Ok(new QuestionDTO(question))
                 : TypedResults.NotFound();
         };
 
-        static async Task<Created<Question>> CreateQuestion(Question question,QuizLiveDb db)
+        static async Task<IResult> CreateQuestion(Question question,QuizLiveDb db)
         {
             db.Questions.Add(question);
             await db.SaveChangesAsync();
-            return TypedResults.Created($"/{question.Id}", question);
+            return TypedResults.Created($"/questions/{question.Id}", new QuestionDTO(question));
         };
 
-        static async Task<Results<NotFound, NoContent>> UpdateQuestion(int id, Question inputQuestion, QuizLiveDb db)
+        static async Task<IResult> UpdateQuestion(int id, Question inputQuestion, QuizLiveDb db)
         {
             var question = await db.Questions.FindAsync(id);
             if (question is null) return TypedResults.NotFound();

@@ -5,25 +5,40 @@ Accept: application/json
 
 ####
 
-POST {{host}}/
+GET {{host}}/questions/1
+Accept: application/json
+
+###
+
+POST {{host}}/questions
 Content-Type: application/json
 
 {
-  "text": "What is the capital of France?"
+  "text": "What is the capital of France?",
+  "OptionA": "London",
+  "OptionB": "Dublin",
+  "OptionC": "Paris",
+  "OptionD": "Mobile",
+  "CorrectOption": "C"
 }
 
 ####
 
-DELETE {{host}}/1
+DELETE {{host}}/questions/1
 
 ####
 
 
-PUT {{host}}/2
+PUT {{host}}/questions/1
 Content-Type: application/json
 
 {
-  "text": "What is the capital of England?"
+  "text": "What is the capital of Alabama?",
+  "OptionA": "London",
+  "OptionB": "Mobile",
+  "OptionC": "Montgomery",
+  "OptionD": "Birmingham",
+  "CorrectOption": "D"
 }
 
 ###
@@ -52,4 +67,34 @@ Content-Type: application/json
 
 {
   "title": "Hard quiz!?"
+}
+
+###
+
+GET {{host}}/games
+Accept: application/json
+
+####
+
+POST {{host}}/games
+Content-Type: application/json
+
+{
+  "GameCode": "15",
+  "Status": "Beginning"
+}
+
+####
+
+DELETE {{host}}/games/1
+
+####
+
+
+PUT {{host}}/games/1
+Content-Type: application/json
+
+{
+  "GameCode": "999",
+  "Status": "Complete"
 }

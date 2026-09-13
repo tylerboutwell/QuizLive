@@ -33,7 +33,7 @@ namespace Api.Endpoints
             {
                 db.Quizzes.Add(quiz);
                 await db.SaveChangesAsync();
-                return TypedResults.Created($"/{quiz.Id}", quiz);
+                return TypedResults.Created($"/quizzes/{quiz.Id}", quiz);
             };
 
             static async Task<Results<NotFound, NoContent>> UpdateQuiz(int id, Quiz inputQuiz, QuizLiveDb db)

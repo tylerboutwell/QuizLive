@@ -33,7 +33,7 @@ namespace Api.Endpoints
             {
                 db.Games.Add(game);
                 await db.SaveChangesAsync();
-                return TypedResults.Created("/{game.id}", game);
+                return TypedResults.Created("/games/{game.id}", game);
             };
 
             static async Task<Results<NotFound, NoContent>> UpdateGame(QuizLiveDb db, Game inputGame, int id)
