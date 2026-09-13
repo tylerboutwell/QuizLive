@@ -18,5 +18,6 @@ app.UseHttpsRedirection();
 QuestionEndpoints.Map(app);
 PlayerEndpoints.Map(app);
 QuizEndpoints.Map(app);
+GameEndpoints.Map(app);
 
 app.Run();

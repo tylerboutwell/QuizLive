@@ -31,7 +31,7 @@ namespace Api.Endpoints
 
             static async Task<Created<Quiz>> CreateQuiz(Quiz quiz, QuizLiveDb db)
             {
-                db.Add(quiz);
+                db.Quizzes.Add(quiz);
                 await db.SaveChangesAsync();
                 return TypedResults.Created($"/{quiz.Id}", quiz);
             };
