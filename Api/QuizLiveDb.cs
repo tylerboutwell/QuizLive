@@ -1,7 +1,7 @@
 ﻿using Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-class QuizLiveDb : DbContext
+public class QuizLiveDb : DbContext
 {
     public QuizLiveDb(DbContextOptions<QuizLiveDb> options)
         : base(options) { }

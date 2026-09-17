@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Api.Services;
 
 namespace Api.Endpoints
 {
@@ -29,11 +30,10 @@ namespace Api.Endpoints
                 return TypedResults.Ok(game);
             };
 
-            static async Task<Created<Game>> CreateGame(QuizLiveDb db, Game game)
+            static async Task<Created<Game>> CreateGame(QuizLiveDb db, Game game, GameService gameService)
             {
-                db.Games.Add(game);
-                await db.SaveChangesAsync();
-                return TypedResults.Created("/games/{game.id}", game);
+                var createdGame = await gameService.CreateGame(game);
+                return TypedResults.Created($"/games/{createdGame.Id}", createdGame);
             };
 
             static async Task<Results<NotFound, NoContent>> UpdateGame(QuizLiveDb db, Game inputGame, int id)
