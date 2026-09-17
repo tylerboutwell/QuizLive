@@ -13,15 +13,26 @@ namespace Api.Services
             return game;
         }
 
-        //public async Task<Game> StartGame(int gameId)
-        //{
+        public async Task<IResult> StartGame(int gameId)
+        {
             // Find game
+            var game = await db.Games.FindAsync(gameId);
             // Make sure it's in Waiting state
-            // Find first question
+            if (game is null) return TypedResults.NotFound();
+            if (game.Status.ToString() != "Waiting") return TypedResults.BadRequest();
+
+            //Get Questions, Randomize them, and get first question
+            IEnumerable<Question> questions = db.Questions.Where(question => question.Id == game.QuizId);
+
             // Change game status
+            game.Status = Status.inProgress;
             // Set current question
+            var firstQuestion = questions.First();
+            game.CurrentQuestionId = firstQuestion.Id;
             // Save changes
             // etc.
-        //}
+            await db.SaveChangesAsync();
+            return TypedResults.Ok(game);
+        }
     }
 }
