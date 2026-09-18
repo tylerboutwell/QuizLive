@@ -14,22 +14,21 @@ namespace Api.Services
             return game;
         }
 
-        public async Task<IResult> JoinGame(string gameCode, int playerId)
+        public async Task<Player?> JoinGame(string gameCode, int playerId)
         {
             var player = await db.Players.FindAsync(playerId);
             // Check if player exists
-            if (player is null) return TypedResults.BadRequest();
+            if (player is null) return null;
 
             var game = await db.Games.FirstOrDefaultAsync(g => g.GameCode == gameCode);
             //Check if game exists
-            if (game is null) return TypedResults.BadRequest();
+            if (game is null) return null;
 
             player.GameId = game.Id;
-            game.Players.Add(player);
            
 
             await db.SaveChangesAsync();
-            return TypedResults.Ok();
+            return player;
 
         }
 
