@@ -13,6 +13,25 @@ namespace Api.Services
             return game;
         }
 
+        public async Task<IResult> JoinGame(int gameId, int playerId)
+        {
+            var player = await db.Players.FindAsync(playerId);
+            // Check if player exists
+            if (player is null) return TypedResults.BadRequest();
+
+            player.GameId = gameId;
+
+            var game = await db.Games.FindAsync(gameId);
+            //Check if game exists
+            if (game is null) return TypedResults.BadRequest();
+
+            game.Players.Add(player);
+
+            await db.SaveChangesAsync();
+            return TypedResults.Ok();
+
+        }
+
         public async Task<IResult> StartGame(int gameId)
         {
             // Find game
@@ -27,6 +46,9 @@ namespace Api.Services
             // Make sure there are more than 0 questions
             if (questions.Count() == 0) return TypedResults.BadRequest();
 
+            // Make sure there are played in the game
+            if (game.Players.Count() == 0) return TypedResults.BadRequest();
+
             // Change game status
             game.Status = Status.inProgress;
             // Set current question
@@ -38,9 +60,9 @@ namespace Api.Services
             return TypedResults.Ok(game);
         }
 
-        public async Task<IResult> PlayRound(int gameId)
-        {
+        //public async Task<IResult> PlayRound(int gameId)
+        //{
 
-        }
+        //}
     }
 }

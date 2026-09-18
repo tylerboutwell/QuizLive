@@ -19,5 +19,7 @@
 
         public int CurrentQuestionId { get; set; }
 
+        public List<Player> Players { get; set; } = [];
+
     }
 }
