@@ -17,5 +17,7 @@
 
         public Status? Status { get; set; }
 
+        public int CurrentQuestionId { get; set; }
+
     }
 }

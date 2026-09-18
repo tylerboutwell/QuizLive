@@ -24,6 +24,9 @@ namespace Api.Services
             //Get Questions, Randomize them, and get first question
             IEnumerable<Question> questions = db.Questions.Where(question => question.Id == game.QuizId);
 
+            // Make sure there are more than 0 questions
+            if (questions.Count() == 0) return TypedResults.BadRequest();
+
             // Change game status
             game.Status = Status.inProgress;
             // Set current question
@@ -33,6 +36,11 @@ namespace Api.Services
             // etc.
             await db.SaveChangesAsync();
             return TypedResults.Ok(game);
+        }
+
+        public async Task<IResult> PlayRound(int gameId)
+        {
+
         }
     }
 }
