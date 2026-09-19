@@ -32,22 +32,22 @@ namespace Api.Services
 
         }
 
-        public async Task<IResult> StartGame(int gameId)
+        public async Task<Game?> StartGame(int gameId)
         {
             // Find game
             var game = await db.Games.FindAsync(gameId);
             // Make sure it's in Waiting state
-            if (game is null) return TypedResults.NotFound();
-            if (game.Status.ToString() != "Waiting") return TypedResults.BadRequest();
+            if (game is null) return null;
+            if (game.Status.ToString() != "Waiting") return null;
 
             //Get Questions, Randomize them, and get first question
             IEnumerable<Question> questions = db.Questions.Where(question => question.Id == game.QuizId);
 
             // Make sure there are more than 0 questions
-            if (questions.Count() == 0) return TypedResults.BadRequest();
+            if (questions.Count() == 0) return null;
 
             // Make sure there are played in the game
-            if (game.Players.Count() == 0) return TypedResults.BadRequest();
+            if (!db.Players.Any(p => p.GameId == game.Id)) return null;
 
             // Change game status
             game.Status = Status.inProgress;
@@ -57,7 +57,7 @@ namespace Api.Services
             // Save changes
             // etc.
             await db.SaveChangesAsync();
-            return TypedResults.Ok(game);
+            return game;
         }
 
         //public async Task<IResult> PlayRound(int gameId)
