@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Api.Endpoints;
+using Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,4 +24,5 @@ PlayerEndpoints.Map(app);
 QuizEndpoints.Map(app);
 GameEndpoints.Map(app);
 
+app.MapHub<GameHub>("/gameHub");
 app.Run();
