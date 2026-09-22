@@ -3,15 +3,16 @@ import { API_URL } from "@/lib/api";
 
 export default function Home() {
     const createGame = async () => {
-        const response = await fetch(`${API_URL}/games`, {
+        const response = await fetch(`${API_URL}/games/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
+            body: JSON.stringify({})
         });
 
         if (!response.ok) {
-            throw new Error("Failed to create game");
+            throw new Error(`Response status: ${response.status}`);
         }
 
         const game = await response.json();
