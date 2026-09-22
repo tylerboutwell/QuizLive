@@ -9,6 +9,17 @@ namespace Api.Services
 
         public async Task<Game> CreateGame(Game game)
         {
+            // generate random game code
+            Random random = new Random();
+            string gameCode = random.Next(1, 999).ToString();
+
+            // While game code exists, generate new code
+            while (db.Games.Any(game => game.GameCode == gameCode))
+            {
+                gameCode = random.Next(1, 999).ToString();
+            }
+
+            game.GameCode = gameCode;
             db.Games.Add(game);
             await db.SaveChangesAsync();
             return game;
