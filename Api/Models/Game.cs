@@ -4,7 +4,7 @@
     public enum Status
     {
         Waiting,
-        inProgress,
+        InProgress,
         Complete
     }
     public class Game
