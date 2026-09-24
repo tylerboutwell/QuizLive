@@ -1,11 +1,23 @@
 'use client';
 import { useState } from "react";
+import { API_URL } from "../../../lib/api";
 
 export default function Page() {
     const [gameCode, setGameCode] = useState('')
 
     function handleJoin() {
         console.log(gameCode)
+        try {
+            const response = await fetch(`${API_URL}/games/join`);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
     return (
