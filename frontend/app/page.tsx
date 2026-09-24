@@ -1,4 +1,5 @@
 'use client';
+import Link from "next/link";
 import { API_URL } from "@/lib/api";
 
 export default function Home() {
@@ -35,9 +36,9 @@ export default function Home() {
                 Create Game
             </button>
 
-            <button className="px-6 py-3 rounded-lg border border-gray-300">
+            <Link href="game/join" className="px-6 py-3 rounded-lg border border-gray-300">
             Join Game
-            </button>
+            </Link>
         </div>
       </div>
     </main>
