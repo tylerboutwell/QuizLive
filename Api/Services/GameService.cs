@@ -25,17 +25,19 @@ namespace Api.Services
             return game;
         }
 
-        public async Task<Player?> JoinGame(string gameCode, int playerId)
+        public async Task<Player?> JoinGame(string gameCode, string playerName)
         {
-            var player = await db.Players.FindAsync(playerId);
-            // Check if player exists
-            if (player is null) return null;
-
             var game = await db.Games.FirstOrDefaultAsync(g => g.GameCode == gameCode);
             //Check if game exists
             if (game is null) return null;
 
-            player.GameId = game.Id;
+            var player = new Player
+            {
+                Name = playerName,
+                GameId = game.Id
+            };
+
+            await db.Players.Add(player)
            
 
             await db.SaveChangesAsync();
