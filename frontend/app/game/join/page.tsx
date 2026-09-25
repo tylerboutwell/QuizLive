@@ -1,14 +1,25 @@
 'use client';
 import { useState } from "react";
 import { API_URL } from "../../../lib/api";
+import { json } from "stream/consumers";
 
 export default function Page() {
     const [gameCode, setGameCode] = useState('')
+    const [playerName, setPlayerName] = useState('')
 
-    function handleJoin() {
-        console.log(gameCode)
+    const handleJoin = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         try {
-            const response = await fetch(`${API_URL}/games/join`);
+            const response = await fetch(`${API_URL}/games/join`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    gameCode,
+                    playerName
+                })
+            });
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
@@ -16,9 +27,9 @@ export default function Page() {
             const result = await response.json();
             console.log(result);
         } catch (error) {
-            console.error(error.message);
+            console.error(error);
         }
-    }
+    };
 
     return (
         <main className="min-h-screen flex items-center justify-center">
@@ -26,6 +37,10 @@ export default function Page() {
                 <h1 className="text-5xl font-bold">Join Game</h1>
 
                 <form onSubmit={handleJoin} >
+                    <input type='text'
+                        placeholder="Enter your name" value={playerName}
+                        onChange={(e) => setPlayerName(e.target.value)}
+                        className='bg-neutral-secondary-medium border rounded-lg m-1 p-2' />
                     <input type='text'
                         placeholder="Enter game code" value={gameCode}
                         onChange={(e) => setGameCode(e.target.value)}
