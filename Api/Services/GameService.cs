@@ -37,7 +37,7 @@ namespace Api.Services
                 GameId = game.Id
             };
 
-            await db.Players.Add(player)
+            db.Players.Add(player);
            
 
             await db.SaveChangesAsync();
@@ -51,10 +51,10 @@ namespace Api.Services
             var game = await db.Games.FindAsync(gameId);
             // Make sure it's in Waiting state
             if (game is null) return null;
-            if (game.Status.ToString() != "Waiting") return null;
+            if (game.Status != Status.Waiting) return null;
 
             //Get Questions, Randomize them, and get first question
-            IEnumerable<Question> questions = db.Questions.Where(question => question.Id == game.QuizId);
+            IEnumerable<Question> questions = db.Questions.Where(question => question.QuizId == game.QuizId);
 
             // Make sure there are more than 0 questions
             if (questions.Count() == 0) return null;
@@ -63,7 +63,7 @@ namespace Api.Services
             if (!db.Players.Any(p => p.GameId == game.Id)) return null;
 
             // Change game status
-            game.Status = Status.inProgress;
+            game.Status = Status.InProgress;
             // Set current question
             var firstQuestion = questions.First();
             game.CurrentQuestionId = firstQuestion.Id;

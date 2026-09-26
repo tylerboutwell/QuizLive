@@ -2,6 +2,7 @@
 using Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Api.Services;
+using Api.DTOs;
 
 namespace Api.Endpoints
 {
@@ -17,7 +18,7 @@ namespace Api.Endpoints
             games.MapPut("/{id}", UpdateGame);
             games.MapDelete("/{id}", DeleteGame);
             games.MapPut("/{id}/start", StartGame);
-            games.MapPost("/{id}/join", JoinGame);
+            games.MapPost("/join", JoinGame);
 
 
             static async Task<Ok<List<Game>>> GetGames(QuizLiveDb db)
@@ -65,10 +66,10 @@ namespace Api.Endpoints
                 return TypedResults.Ok(game);
             }
 
-            static async Task<Results<IResult> JoinGame(QuizLiveDb db, GameService gameService, string gameCode, string playerName)
+            static async Task<IResult> JoinGame(GameService gameService, JoinGameRequest request)
             {
-                var player = await gameService.JoinGame(gameCode, playerName)
-                if (Game is null) return TypedResults.NotFound();
+                var player = await gameService.JoinGame(request.GameCode, request.PlayerName);
+                if (player is null) return TypedResults.NotFound();
                 return TypedResults.Ok(player);
 
             }

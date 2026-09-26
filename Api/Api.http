@@ -1,4 +1,4 @@
-@host = http://localhost:5277
+@host = http://localhost:5000
 
 GET {{host}}/questions
 Accept: application/json
@@ -76,13 +76,10 @@ Accept: application/json
 
 ####
 
-POST {{host}}/games
+POST {{host}}/games/
 Content-Type: application/json
 
-{
-  "GameCode": "15",
-  "Status": "Beginning"
-}
+{}
 
 ####
 
