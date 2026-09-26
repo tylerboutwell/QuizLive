@@ -1,7 +1,6 @@
 'use client';
 import { useState } from "react";
 import { API_URL } from "../../../lib/api";
-import { json } from "stream/consumers";
 
 export default function Page() {
     const [gameCode, setGameCode] = useState('')
