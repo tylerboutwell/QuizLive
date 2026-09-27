@@ -7,7 +7,7 @@ namespace Api.Services
     public class GameService(QuizLiveDb db)
     {
 
-        public async Task<Game> CreateGame(Game game)
+        public async Task<Game> CreateGame(int quizId)
         {
             // generate random game code
             Random random = new Random();
@@ -18,8 +18,12 @@ namespace Api.Services
             {
                 gameCode = random.Next(1, 999).ToString();
             }
-
-            game.GameCode = gameCode;
+            Game game = new Game
+            {
+                GameCode = gameCode,
+                QuizId = quizId
+            };
+            
             db.Games.Add(game);
             await db.SaveChangesAsync();
             return game;

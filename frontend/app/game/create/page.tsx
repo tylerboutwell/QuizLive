@@ -10,6 +10,7 @@ export default function Home() {
         e.preventDefault();
         console.log(quizId);
         if (quizId == null) return
+        console.log(JSON.stringify({quizId}))
 
         const response = await fetch(`${API_URL}/games/`, {
             method: "POST",
