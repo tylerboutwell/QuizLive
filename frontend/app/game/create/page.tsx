@@ -8,9 +8,7 @@ export default function Home() {
 
     const handleCreate = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(quizId);
         if (quizId == null) return
-        console.log(JSON.stringify({quizId}))
 
         const response = await fetch(`${API_URL}/games/`, {
             method: "POST",
@@ -37,21 +35,24 @@ export default function Home() {
                             <div
                                 onClick={() => setQuizId(1)}
                                 role="button"
-                                className="text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
+                                className={`text-slate-800 flex w-full items-center rounded-md p-3 transition-all
+                                        ${quizId === 1 ? "bg-slate-200" : "hover:bg-slate-100"}`}
                             >
                                 Sports
                             </div>
                             <div
                                 onClick={() => setQuizId(2)}
                                 role="button"
-                                className="text-slate-800  flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
+                                className={`text-slate-800 flex w-full items-center rounded-md p-3 transition-all
+                                        ${quizId === 2 ? "bg-slate-200" : "hover:bg-slate-100"}`}
                             >
                                 Movies
                             </div>
                             <div
                                 onClick={() => setQuizId(3)}
                                 role="button"
-                                className="text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
+                                className={`text-slate-800 flex w-full items-center rounded-md p-3 transition-all
+                                        ${quizId === 3 ? "bg-slate-200" : "hover:bg-slate-100"}`}
                             >
                                 Music
                             </div>
@@ -59,7 +60,7 @@ export default function Home() {
                     </div>
 
                 
-                    <button type="submit" className="px-6 py-3 rounded-lg bg-black text-white hover:bg-stone-700">
+                    <button type="submit" className="m-2 px-6 py-3 rounded-lg bg-black text-white hover:bg-stone-700">
                         Create Game
                     </button>
                 </form>
