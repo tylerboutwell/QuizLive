@@ -1,12 +1,12 @@
 namespace Api.DTOs
 {
 
-    public class JoinGameRequest
+    public class CreateGameRequest
     {
         public required int QuizId { get; set; }
 
-        public JoinGameRequest() { }
-        public JoinGameRequest(int quizId)
+        public CreateGameRequest() { }
+        public CreateGameRequest(int quizId)
         {
             QuizId = quizId;
         }
