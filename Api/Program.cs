@@ -3,6 +3,7 @@ using Api.Hubs;
 using Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,10 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowCredentials();
         });
+});
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 var app = builder.Build();
