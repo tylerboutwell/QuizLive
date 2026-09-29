@@ -1,26 +1,7 @@
-'use client';
 import Link from "next/link";
 import { API_URL } from "@/lib/api";
 
 export default function Home() {
-    const createGame = async () => {
-        const response = await fetch(`${API_URL}/games/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({})
-        });
-
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-
-        const game = await response.json();
-
-        console.log(game);
-    }
-
 
   return (
     <main className="min-h-screen flex items-center justify-center">
@@ -32,9 +13,9 @@ export default function Home() {
         </p>
 
         <div className="flex gap-4 justify-center">
-            <button onClick={createGame} className="px-6 py-3 rounded-lg bg-black text-white">
+            <Link href="game/create" className="px-6 py-3 rounded-lg bg-black text-white">
                 Create Game
-            </button>
+            </Link>
 
             <Link href="game/join" className="px-6 py-3 rounded-lg border border-gray-300">
             Join Game
