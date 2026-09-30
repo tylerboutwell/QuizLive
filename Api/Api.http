@@ -93,5 +93,5 @@ Content-Type: application/json
 
 {
   "GameCode": "999",
-  "Status": "Complete"
+  "Status": "InProgress"
 }
