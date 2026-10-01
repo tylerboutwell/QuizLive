@@ -1,10 +1,12 @@
 'use client';
 import { useState } from "react";
 import { API_URL } from "../../../lib/api";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
     const [gameCode, setGameCode] = useState('')
     const [playerName, setPlayerName] = useState('')
+    const router = useRouter();
 
     const handleJoin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -24,7 +26,8 @@ export default function Page() {
             }
 
             const result = await response.json();
-            console.log(result);
+            console.log(`${result.gameId}`)
+            router.push(`/game/${result.gameId}`);
         } catch (error) {
             console.error(error);
         }
