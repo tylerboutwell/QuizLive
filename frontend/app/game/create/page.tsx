@@ -2,10 +2,11 @@
 import Link from "next/link";
 import { API_URL } from "@/lib/api";
 import { useState } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
     const [quizId, setQuizId] = useState<number | null>(null);
+    const router = useRouter();
 
     const handleCreate = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -24,7 +25,7 @@ export default function Home() {
             throw new Error(`Response status: ${response.status}`);
         }
         const game = await response.json();
-        redirect(`/game/${game.id}`)
+        router.push(`/game/${game.id}`);
     }
 
     return (
