@@ -26,7 +26,6 @@ export default function Page() {
             }
 
             const result = await response.json();
-            console.log(`${result.gameId}`)
             router.push(`/game/${result.gameId}`);
         } catch (error) {
             console.error(error);
