@@ -34,10 +34,14 @@ namespace Api.Endpoints
                 return TypedResults.Ok(game);
             };
 
-            static async Task<Created<Game>> CreateGame(QuizLiveDb db, CreateGameRequest request, GameService gameService)
+            static async Task<IResult> CreateGame(QuizLiveDb db, CreateGameRequest request, GameService gameService)
             {
-                var createdGame = await gameService.CreateGame(request.QuizId, request.PlayerName);
-                return TypedResults.Created($"/games/{createdGame.Id}", createdGame);
+                var result = await gameService.CreateGame(request.QuizId, request.PlayerName);
+                return TypedResults.Created($"/games/{result.game.Id}", new
+                {
+                    Game = result.game,
+                    PlayerId = result.player.Id
+                });
             };
 
             static async Task<Results<NotFound, NoContent>> UpdateGame(QuizLiveDb db, Game inputGame, int id)

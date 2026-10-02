@@ -26,6 +26,7 @@ export default function Page() {
             }
 
             const result = await response.json();
+            localStorage.setItem('playerId', result.Id);
             router.push(`/game/${result.gameId}`);
         } catch (error) {
             console.error(error);
