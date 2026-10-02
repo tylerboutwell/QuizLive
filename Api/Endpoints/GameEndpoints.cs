@@ -36,7 +36,7 @@ namespace Api.Endpoints
 
             static async Task<Created<Game>> CreateGame(QuizLiveDb db, CreateGameRequest request, GameService gameService)
             {
-                var createdGame = await gameService.CreateGame(request.QuizId);
+                var createdGame = await gameService.CreateGame(request.QuizId, request.PlayerName);
                 return TypedResults.Created($"/games/{createdGame.Id}", createdGame);
             };
 

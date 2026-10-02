@@ -5,12 +5,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
+    const [playerName, setPlayerName] = useState("");
     const [quizId, setQuizId] = useState<number | null>(null);
     const router = useRouter();
 
     const handleCreate = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (quizId == null) return
+        if (quizId == null || !playerName.trim()) return
 
         const response = await fetch(`${API_URL}/games/`, {
             method: "POST",
@@ -18,7 +19,8 @@ export default function Home() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                quizId
+                quizId,
+                playerName
             })
         });
         if (!response.ok) {
@@ -30,8 +32,15 @@ export default function Home() {
 
     return (
         <main className="min-h-screen flex items-center justify-center">
-            <div className="text-center space-y-6">
-                <h1 className="text-5xl font-bold">Choose quiz</h1>
+            <div className="text-center space-y-5">
+                <input
+                    type="text"
+                    placeholder="Enter your name"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)}
+                    className="w-full rounded-lg border border-slate-200 p-3"
+                />
+                <h1 className="text-4xl font-bold">Choose quiz</h1>
 
                 <form onSubmit={handleCreate}>
                     <div className="relative flex flex-col rounded-lg bg-white shadow-sm border border-slate-200">
@@ -64,7 +73,7 @@ export default function Home() {
                     </div>
 
                 
-                    <button type="submit" className="m-2 px-6 py-3 rounded-lg bg-black text-white hover:bg-stone-700">
+                    <button type="submit" className="m-3 px-6 py-3 rounded-lg bg-black text-white hover:bg-stone-700">
                         Create Game
                     </button>
                 </form>

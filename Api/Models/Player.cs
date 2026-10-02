@@ -9,5 +9,7 @@
         public int Score { get; set; } = 0;
 
         public int? GameId { get; set; }
+
+        public bool IsHost { get; set; } = false;
     }
 }

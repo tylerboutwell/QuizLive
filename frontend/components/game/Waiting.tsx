@@ -34,7 +34,7 @@ export default function Waiting({ game }: WaitingProps) {
             </div>
 
             <div className="text-gray-600">
-                Game ID: {game.id}
+                Game Code: {game.gameCode}
             </div>
 
             <div className="mt-4 text-lg">
