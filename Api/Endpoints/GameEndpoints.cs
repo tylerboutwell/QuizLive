@@ -18,7 +18,7 @@ namespace Api.Endpoints
             games.MapPut("/{id}", UpdateGame);
             games.MapDelete("/{id}", DeleteGame);
             games.MapGet("/{id}/players", GetPlayers);
-            games.MapPut("/{id}/start", StartGame);
+            games.MapPost("/{id}/start", StartGame);
             games.MapPost("/join", JoinGame);
 
 
