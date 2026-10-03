@@ -81,7 +81,6 @@ namespace Api.Endpoints
             static async Task<Results<BadRequest, Ok<Game>>> StartGame(QuizLiveDb db, int id, GameService gameService)
             {
                 var game = await gameService.StartGame(id);
-                if (game is null) return TypedResults.BadRequest();
                 return TypedResults.Ok(game);
             }
 
