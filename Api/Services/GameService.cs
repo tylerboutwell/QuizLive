@@ -57,27 +57,30 @@ namespace Api.Services
 
         }
 
-        public async Task<Game?> StartGame(int gameId)
+        public async Task<Game> StartGame(int gameId)
         {
             // Find game
             var game = await db.Games.FindAsync(gameId);
-            // Make sure it's in Waiting state
-            if (game is null) return null;
-            if (game.Status != Status.Waiting) return null;
+            // Make sure game exists and is in waiting status
+            if (game is null) throw new Exception("Game not found");
+            if (game.Status != Status.Waiting) throw new Exception("Game is not in waiting status");
 
-            //Get Questions, Randomize them, and get first question
+            //Get Questions
             IEnumerable<Question> questions = db.Questions.Where(question => question.QuizId == game.QuizId);
 
             // Make sure there are more than 0 questions
-            if (questions.Count() == 0) return null;
+            if (!questions.Any()) throw new Exception("No questions available for the quiz");
 
-            // Make sure there are played in the game
-            if (!db.Players.Any(p => p.GameId == game.Id)) return null;
+            // Make sure there are players in the game
+            if (!db.Players.Any(p => p.GameId == game.Id)) throw new Exception("No players in the game");
 
             // Change game status
             game.Status = Status.InProgress;
-            // Set current question
-            var firstQuestion = questions.First();
+
+            // Get a random question from the list of questions and set it as the current question
+            var firstQuestion = questions
+                .OrderBy(q => Guid.NewGuid())
+                .First();
             game.CurrentQuestionId = firstQuestion.Id;
             // Save changes
             // etc.
