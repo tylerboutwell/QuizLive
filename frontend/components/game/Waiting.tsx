@@ -5,6 +5,7 @@ import { API_URL } from "@/lib/api";
 import { createConnection } from "@/lib/signalr";
 import { Player } from "@/types/player";
 import { Game } from "@/types/game";
+import { useRouter } from "next/navigation";
 
 type WaitingProps = {
     game: Game;
@@ -12,6 +13,7 @@ type WaitingProps = {
 export default function Waiting({ game }: WaitingProps) {
     const [players, setPlayers] = useState<Player[]>([]);
     const [playerId, setPlayerId] = useState<number | null>(null)
+    const router = useRouter();
 
     useEffect(() => {
         const getPlayers = async () => {
@@ -63,6 +65,25 @@ export default function Waiting({ game }: WaitingProps) {
     const currentPlayer = players.find(
         player => player.id === playerId
     );
+
+    const handleStart = async (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const response = await fetch(`${API_URL}/games/${game.id}/start`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                gameId: game.id,
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const result = await response.json();
+        router.push(`/game/${result.id}`);
+    }
     return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4">
             <div className="border rounded-lg p-8 w-80 shadow-sm">
@@ -87,7 +108,7 @@ export default function Waiting({ game }: WaitingProps) {
                 ))}
                 </ul>
                 {currentPlayer?.isHost && (
-                    <button className="mt-4 px-4 py-2 rounded bg-black text-white">
+                    <button onClick={handleStart} className="mt-4 px-4 py-2 rounded bg-black text-white">
                         Start Game
                     </button>
                 )}
