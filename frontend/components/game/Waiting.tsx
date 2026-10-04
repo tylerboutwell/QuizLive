@@ -27,23 +27,35 @@ export default function Waiting({ game }: WaitingProps) {
 
     useEffect(() => {
         const connection = createConnection();
+        let cancelled = false;
+
+        connection.on("PlayerJoined", (player: Player) => {
+            setPlayers(prev =>
+                prev.some(p => p.id === player.id) ? prev : [...prev, player]
+            );
+        });
+
+        connection.onreconnected(() => {
+            connection.invoke("JoinGame", game.id).catch(console.error);
+        });
 
         const startConnection = async () => {
-            await connection.start();
+            try {
+                await connection.start();
+                if (cancelled) return;
 
-            connection.on("PlayerJoined", (player: Player) => {
-                setPlayers(prev => [...prev, player]);
-            });
-
-            await connection.invoke("JoinGame", game.id);
-
-            console.log("SignalR connected!");
-            console.log("Joined game!");
+                await connection.invoke("JoinGame", game.id);
+                console.log("SignalR connected and joined game!");
+            } catch (err) {
+                if (cancelled) return; // expected in dev from Strict Mode
+                console.error("SignalR error:", err);
+            }
         };
 
         startConnection();
 
         return () => {
+            cancelled = true;
             connection.stop();
         };
     }, [game.id]);
