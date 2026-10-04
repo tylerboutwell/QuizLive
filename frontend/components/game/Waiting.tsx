@@ -1,16 +1,13 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Game } from "@/types/game";
 import { API_URL } from "@/lib/api";
+import { createConnection } from "@/lib/signalr";
+import { Player } from "@/types/player";
+import { Game } from "@/types/game";
 
 type WaitingProps = {
     game: Game;
-};
-type Player = {
-    id: number;
-    name: string;
-    isHost: boolean;
 };
 export default function Waiting({ game }: WaitingProps) {
     const [players, setPlayers] = useState<Player[]>([]);
@@ -26,6 +23,29 @@ export default function Waiting({ game }: WaitingProps) {
         };
 
         getPlayers();
+    }, [game.id]);
+
+    useEffect(() => {
+        const connection = createConnection();
+
+        const startConnection = async () => {
+            await connection.start();
+
+            connection.on("PlayerJoined", (player: Player) => {
+                setPlayers(prev => [...prev, player]);
+            });
+
+            await connection.invoke("JoinGame", game.id);
+
+            console.log("SignalR connected!");
+            console.log("Joined game!");
+        };
+
+        startConnection();
+
+        return () => {
+            connection.stop();
+        };
     }, [game.id]);
 
     const currentPlayer = players.find(

@@ -3,6 +3,8 @@ using Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Api.Services;
 using Api.DTOs;
+using Api.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Api.Endpoints
 {
@@ -84,10 +86,11 @@ namespace Api.Endpoints
                 return TypedResults.Ok(game);
             }
 
-            static async Task<IResult> JoinGame(GameService gameService, JoinGameRequest request)
+            static async Task<IResult> JoinGame(GameService gameService, JoinGameRequest request, IHubContext<GameHub, IGameClient> hub)
             {
                 var player = await gameService.JoinGame(request.GameCode, request.PlayerName);
                 if (player is null) return TypedResults.NotFound();
+                await hub.Clients.Group($"game-{player.GameId}").PlayerJoined(player);
                 return TypedResults.Ok(player);
 
             }

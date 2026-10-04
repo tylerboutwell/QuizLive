@@ -1,16 +1,20 @@
+using Api.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Api.Hubs;
 
-public class GameHub : Hub
+public interface IGameClient
 {
-    public async Task JoinGame(string gameCode, string playerName)
-    {
-        await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
+    Task PlayerJoined(Player player);
+}
 
-        await Clients.Group(gameCode).SendAsync(
-            "PlayerJoined",
-            playerName
+public class GameHub : Hub<IGameClient>
+{
+    public async Task JoinGame(int gameId)
+    {
+        await Groups.AddToGroupAsync(
+            Context.ConnectionId,
+            $"game-{gameId}"
         );
     }
 }
