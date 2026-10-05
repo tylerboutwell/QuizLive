@@ -20,6 +20,7 @@ namespace Api.Endpoints
             games.MapPut("/{id}", UpdateGame);
             games.MapDelete("/{id}", DeleteGame);
             games.MapGet("/{id}/players", GetPlayers);
+            games.MapGet("/{id}/question", GetQuestion);
             games.MapPost("/{id}/start", StartGame);
             games.MapPost("/join", JoinGame);
 
@@ -78,6 +79,14 @@ namespace Api.Endpoints
                     .ToList();
 
                 return TypedResults.Ok(players);
+            }
+
+            static async Task<IResult> GetQuestion(int id, QuizLiveDb db)
+            {
+                var game = await db.Games.FindAsync(id);
+                if (game is null) return TypedResults.NotFound();
+                var question = await db.Questions.FindAsync(game.CurrentQuestionId);
+                return TypedResults.Ok(question);
             }
 
             static async Task<Results<BadRequest, Ok<Game>>> StartGame(QuizLiveDb db, int id, GameService gameService, IHubContext<GameHub, IGameClient> hub)

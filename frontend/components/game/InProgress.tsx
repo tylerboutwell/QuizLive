@@ -6,6 +6,7 @@ import { createConnection } from "@/lib/signalr";
 import { Player } from "@/types/player";
 import { Game } from "@/types/game";
 import { useRouter } from "next/navigation";
+import { Question } from "../../types/question";
 
 type InProgressProps = {
     game: Game;
@@ -13,6 +14,7 @@ type InProgressProps = {
 export default function InProgress({ game }: InProgressProps) {
     const [players, setPlayers] = useState<Player[]>([]);
     const [playerId, setPlayerId] = useState<number | null>(null)
+    const [question, setQuestion] = useState<Question | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -26,6 +28,24 @@ export default function InProgress({ game }: InProgressProps) {
 
         getPlayers();
     }, [game.id]);
+
+    useEffect(() => {
+        const getQuestion = async () => {
+            const response = await fetch(
+                `${API_URL}/games/${game.id}/question`
+            );
+
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const question = await response.json();
+
+            setQuestion(question);
+        };
+
+        getQuestion();
+    }, [game.id, game.currentQuestionId]);
 
     useEffect(() => {
         const connection = createConnection();
@@ -87,25 +107,28 @@ export default function InProgress({ game }: InProgressProps) {
             <div className="border rounded-lg p-8 w-80 shadow-sm">
 
                 <div className="text-2xl font-bold">
-                    {game.currentQuestionId}
+                    {question?.text}
                 </div>
 
-                <div className="text-gray-600">
-                    Game Code: {game.gameCode}
+                <div className="mt-4 flex flex-col gap-2">
+                    <button className="border rounded-lg p-3">
+                        {question?.optionA}
+                    </button>
+
+                    <button className="border rounded-lg p-3">
+                        {question?.optionB}
+                    </button>
+
+                    <button className="border rounded-lg p-3">
+                        {question?.optionC}
+                    </button>
+
+                    <button className="border rounded-lg p-3">
+                        {question?.optionD}
+                    </button>
                 </div>
 
-                <div className="mt-4 text-lg">
-                    Players
-                </div>
-
-                <ul className="text-gray-700 text-center">
-                    {players.map(player => (
-                        <li key={player.id}>
-                            {player.name}
-                        </li>
-                    ))}
-                </ul>
             </div>
         </div>
-    )
+    );
 }
