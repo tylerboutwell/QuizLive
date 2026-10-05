@@ -6,6 +6,7 @@ namespace Api.Hubs;
 public interface IGameClient
 {
     Task PlayerJoined(Player player);
+    Task GameStarted(Game game);
 }
 
 public class GameHub : Hub<IGameClient>

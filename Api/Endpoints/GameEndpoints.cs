@@ -80,9 +80,10 @@ namespace Api.Endpoints
                 return TypedResults.Ok(players);
             }
 
-            static async Task<Results<BadRequest, Ok<Game>>> StartGame(QuizLiveDb db, int id, GameService gameService)
+            static async Task<Results<BadRequest, Ok<Game>>> StartGame(QuizLiveDb db, int id, GameService gameService, IHubContext<GameHub, IGameClient> hub)
             {
                 var game = await gameService.StartGame(id);
+                await hub.Clients.Group($"game-{game.Id}").GameStarted(game);
                 return TypedResults.Ok(game);
             }
 

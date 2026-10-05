@@ -37,6 +37,10 @@ export default function Waiting({ game }: WaitingProps) {
             );
         });
 
+        connection.on("GameStarted", (game: Game) => {
+            router.push(`/game/${game.id}`);
+        });
+
         connection.onreconnected(() => {
             connection.invoke("JoinGame", game.id).catch(console.error);
         });
@@ -71,12 +75,6 @@ export default function Waiting({ game }: WaitingProps) {
 
         const response = await fetch(`${API_URL}/games/${game.id}/start`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                gameId: game.id,
-            })
         });
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
