@@ -105,11 +105,12 @@ export default function InProgress({ game }: InProgressProps) {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4">
             <div className="border rounded-lg p-8 w-80 shadow-sm">
-
+                {/* Question */}
                 <div className="text-2xl font-bold">
                     {question?.text}
                 </div>
 
+                {/* Options */}
                 <div className="mt-4 flex flex-col gap-2">
                     <button className="border rounded-lg p-3">
                         {question?.optionA}
@@ -126,6 +127,33 @@ export default function InProgress({ game }: InProgressProps) {
                     <button className="border rounded-lg p-3">
                         {question?.optionD}
                     </button>
+                </div>
+
+
+                {/* Scoreboard */}
+                <div className="mt-6">
+                    <div className="font-bold mb-2">
+                        Scoreboard
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        {players
+                            .sort((a, b) => b.score - a.score)
+                            .map((player, index) => (
+                                <div
+                                    key={player.id}
+                                    className="flex justify-between border rounded-lg p-2"
+                                >
+                                    <span>
+                                        {index + 1}. {player.name}
+                                    </span>
+
+                                    <span className="font-bold">
+                                        {player.score}
+                                    </span>
+                                </div>
+                            ))}
+                    </div>
                 </div>
 
             </div>
