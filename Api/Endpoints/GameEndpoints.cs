@@ -23,6 +23,7 @@ namespace Api.Endpoints
             games.MapGet("/{id}/question", GetQuestion);
             games.MapPost("/{id}/start", StartGame);
             games.MapPost("/join", JoinGame);
+            games.MapPost("/{id}/answer", AnswerQuestion);
 
 
             static async Task<Ok<List<Game>>> GetGames(QuizLiveDb db)
@@ -103,6 +104,15 @@ namespace Api.Endpoints
                 await hub.Clients.Group($"game-{player.GameId}").PlayerJoined(player);
                 return TypedResults.Ok(player);
 
+            }
+
+            static async Task<IResult> AnswerQuestion(QuizLiveDb db, int id, AnswerQuestionRequest request, GameService gameService, IHubContext<GameHub, IGameClient> hub)
+            {
+                var result = await gameService.SubmitAnswer(request.PlayerId, request.Answer);
+                if (result is null) return TypedResults.NotFound();
+
+                await hub.Clients.Group($"game-{id}").UpdateScores(result.Players);
+                return TypedResults.Ok(new { IsCorrect = result.IsCorrect});
             }
         }
     }

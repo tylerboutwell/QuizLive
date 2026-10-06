@@ -15,6 +15,7 @@ export default function InProgress({ game }: InProgressProps) {
     const [players, setPlayers] = useState<Player[]>([]);
     const [playerId, setPlayerId] = useState<number | null>(null)
     const [question, setQuestion] = useState<Question | null>(null);
+    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -61,6 +62,10 @@ export default function InProgress({ game }: InProgressProps) {
             router.push(`/game/${game.id}`);
         });
 
+        connection.on("UpdateScores", (players: Player[]) => {
+            setPlayers(players);
+        });
+
         connection.onreconnected(() => {
             connection.invoke("JoinGame", game.id).catch(console.error);
         });
@@ -90,17 +95,33 @@ export default function InProgress({ game }: InProgressProps) {
         player => player.id === playerId
     );
 
-    const handleStart = async (e: React.SubmitEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const response = await fetch(`${API_URL}/games/${game.id}/start`, {
-            method: "POST",
-        });
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+    const handleAnswer = async (answer: string) => {
+        if (!currentPlayer || selectedAnswer) {
+            return;
         }
-        const result = await response.json();
-        router.push(`/game/${result.id}`);
+
+        setSelectedAnswer(answer);
+
+        const result = await fetch(`${API_URL}/games/${game.id}/answer`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                playerId: currentPlayer.id,
+                answer: answer
+            })
+        });
+
+        if (!result.ok) {
+            console.error("Failed to submit answer");
+            return;
+        }
+
+        const data = await result.json();
+
+        console.log(data);
+
     }
     return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4">
@@ -112,19 +133,36 @@ export default function InProgress({ game }: InProgressProps) {
 
                 {/* Options */}
                 <div className="mt-4 flex flex-col gap-2">
-                    <button className="border rounded-lg p-3">
+                    <button
+                        disabled={selectedAnswer !== null}
+                        className={`border rounded-lg p-3 ${selectedAnswer === "A" ? "bg-gray-200" : ""
+                            }`}
+                        onClick={() => handleAnswer("A")}
+                    >
                         {question?.optionA}
                     </button>
 
-                    <button className="border rounded-lg p-3">
+                    <button disabled={selectedAnswer !== null}
+                        className={`border rounded-lg p-3 ${selectedAnswer === "B" ? "bg-gray-200" : ""
+                            }`}
+                        onClick={() => handleAnswer("B")}
+                    >
                         {question?.optionB}
                     </button>
 
-                    <button className="border rounded-lg p-3">
+                    <button disabled={selectedAnswer !== null}
+                        className={`border rounded-lg p-3 ${selectedAnswer === "C" ? "bg-gray-200" : ""
+                            }`}
+                        onClick={() => handleAnswer("C")}
+                    >
                         {question?.optionC}
                     </button>
 
-                    <button className="border rounded-lg p-3">
+                    <button disabled={selectedAnswer !== null}
+                        className={`border rounded-lg p-3 ${selectedAnswer === "D" ? "bg-gray-200" : ""
+                            }`}
+                        onClick={() => handleAnswer("D")}
+                    >
                         {question?.optionD}
                     </button>
                 </div>

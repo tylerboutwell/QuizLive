@@ -88,9 +88,30 @@ namespace Api.Services
             return game;
         }
 
-        //public async Task<IResult> PlayRound(int gameId)
-        //{
+        public async Task<SubmitAnswerResult?> SubmitAnswer(int playerId, string answer)
+        {
+            var player = await db.Players.FindAsync(playerId);
+            if (player is null) return null;
 
-        //}
+            var game = await db.Games.FindAsync(player.GameId);
+            if (game is null) return null;
+
+            var question = await db.Questions.FindAsync(game.CurrentQuestionId);
+            if (question is null) return null;
+
+            var isCorrect = question.CorrectOption == answer;
+            if (isCorrect)
+            {
+                player.Score += 1;
+                await db.SaveChangesAsync();
+            };
+
+            return new SubmitAnswerResult
+            { 
+                IsCorrect = isCorrect,
+                Players = await db.Players.Where(p => p.GameId == game.Id).ToListAsync()
+            };
+
+        }
     }
 }
