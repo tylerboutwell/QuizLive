@@ -10,4 +10,5 @@ public class QuizLiveDb : DbContext
     public DbSet<Player> Players => Set<Player>();
     public DbSet<Quiz> Quizzes => Set<Quiz>();
     public DbSet<Game> Games => Set<Game>();
+    public DbSet<GameQuestion> GameQuestions => Set<GameQuestion>();
 }

@@ -74,16 +74,28 @@ namespace Api.Services
             // Make sure there are players in the game
             if (!db.Players.Any(p => p.GameId == game.Id)) throw new Exception("No players in the game");
 
+            // Randomize question order
+            var shuffledQuestions = questions
+            .OrderBy(q => Guid.NewGuid())
+            .ToList();
+
+            // Create GameQuestions
+            for (int i = 0; i < shuffledQuestions.Count; i++)
+            {
+                db.GameQuestions.Add(new GameQuestion
+                {
+                    GameId = game.Id,
+                    QuestionId = shuffledQuestions[i].Id,
+                    Order = i + 1
+                });
+            }
+
+            //Set the first question as the current question
+            game.CurrentQuestionId = shuffledQuestions[0].Id;
+
             // Change game status
             game.Status = Status.InProgress;
-
-            // Get a random question from the list of questions and set it as the current question
-            var firstQuestion = questions
-                .OrderBy(q => Guid.NewGuid())
-                .First();
-            game.CurrentQuestionId = firstQuestion.Id;
             // Save changes
-            // etc.
             await db.SaveChangesAsync();
             return game;
         }
