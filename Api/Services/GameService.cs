@@ -125,5 +125,10 @@ namespace Api.Services
             };
 
         }
+
+        //public async Task<Question> NextQuestion (int gameId)
+        //{
+
+        //}
     }
 }

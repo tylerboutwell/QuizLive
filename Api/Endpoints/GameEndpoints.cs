@@ -24,6 +24,7 @@ namespace Api.Endpoints
             games.MapPost("/{id}/start", StartGame);
             games.MapPost("/join", JoinGame);
             games.MapPost("/{id}/answer", AnswerQuestion);
+            //games.MapPost("/{id}/next", NextQuestion);
 
 
             static async Task<Ok<List<Game>>> GetGames(QuizLiveDb db)
@@ -87,7 +88,13 @@ namespace Api.Endpoints
                 var game = await db.Games.FindAsync(id);
                 if (game is null) return TypedResults.NotFound();
                 var question = await db.Questions.FindAsync(game.CurrentQuestionId);
-                return TypedResults.Ok(question);
+                var gameQuestion = await db.GameQuestions
+                    .FirstOrDefaultAsync(gq =>
+                        gq.GameId == id &&
+                        gq.QuestionId == game.CurrentQuestionId);
+                var totalQuestions = await db.GameQuestions
+                    .CountAsync(gq => gq.GameId == id);
+                return TypedResults.Ok(new { question, gameQuestion.Order, totalQuestions });
             }
 
             static async Task<Results<BadRequest, Ok<Game>>> StartGame(QuizLiveDb db, int id, GameService gameService, IHubContext<GameHub, IGameClient> hub)
@@ -114,6 +121,16 @@ namespace Api.Endpoints
                 await hub.Clients.Group($"game-{id}").UpdateScores(result.Players);
                 return TypedResults.Ok(new { IsCorrect = result.IsCorrect});
             }
+
+            //static async Task<IResult> NextQuestion(QuizLiveDb db, int id,GameService gameService, IHubContext<GameHub, IGameClient> hub)
+            //{
+            //    var question = await gameService.NextQuestion(id);
+            //    if (question is null) return TypedResults.NotFound();
+            //    var game = await db.Games.FindAsync(id);
+            //    if (game is null) return TypedResults.NotFound();
+            //    await hub.Clients.Group($"game-{game.Id}").ChangeQuestion(question);
+            //    return TypedResults.Ok(question);
+            //}
         }
     }
 }

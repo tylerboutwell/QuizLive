@@ -15,6 +15,8 @@ export default function InProgress({ game }: InProgressProps) {
     const [players, setPlayers] = useState<Player[]>([]);
     const [playerId, setPlayerId] = useState<number | null>(null)
     const [question, setQuestion] = useState<Question | null>(null);
+    const [questionOrder, setQuestionOrder] = useState<number>(0);
+    const [totalQuestions, setTotalQuestions] = useState<number>(0);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const router = useRouter();
 
@@ -42,7 +44,9 @@ export default function InProgress({ game }: InProgressProps) {
 
             const question = await response.json();
 
-            setQuestion(question);
+            setQuestion(question.question);
+            setQuestionOrder(question.order);
+            setTotalQuestions(question.totalQuestions);
         };
 
         getQuestion();
@@ -51,16 +55,6 @@ export default function InProgress({ game }: InProgressProps) {
     useEffect(() => {
         const connection = createConnection();
         let cancelled = false;
-
-        connection.on("PlayerJoined", (player: Player) => {
-            setPlayers(prev =>
-                prev.some(p => p.id === player.id) ? prev : [...prev, player]
-            );
-        });
-
-        connection.on("GameStarted", (game: Game) => {
-            router.push(`/game/${game.id}`);
-        });
 
         connection.on("UpdateScores", (players: Player[]) => {
             setPlayers(players);
@@ -126,6 +120,7 @@ export default function InProgress({ game }: InProgressProps) {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4">
             <div className="border rounded-lg p-8 w-80 shadow-sm">
+                Question {questionOrder} of {totalQuestions}
                 {/* Question */}
                 <div className="text-2xl font-bold">
                     {question?.text}
