@@ -118,10 +118,33 @@ namespace Api.Services
                 await db.SaveChangesAsync();
             };
 
+            var gameQuestion = await db.GameQuestions.FirstOrDefaultAsync(gq => gq.GameId == game.Id && gq.QuestionId == question.Id);
+
+            var isGameFinished = gameQuestion is null || gameQuestion.Order == await db.GameQuestions.CountAsync(gq => gq.GameId == game.Id);
+            GameQuestion? nextGameQuestion = null;
+            if (isGameFinished)
+            {
+                game.Status = Status.Complete;
+                await db.SaveChangesAsync();
+            }
+            else
+            {
+                nextGameQuestion = await db.GameQuestions.FirstOrDefaultAsync(gq => gq.GameId == game.Id && gq.Order == gameQuestion.Order + 1);
+                if (nextGameQuestion is not null)
+                {
+                    game.CurrentQuestionId = nextGameQuestion.QuestionId;
+                    await db.SaveChangesAsync();
+                }
+            }
             return new SubmitAnswerResult
             { 
                 IsCorrect = isCorrect,
-                Players = await db.Players.Where(p => p.GameId == game.Id).ToListAsync()
+                Players = await db.Players.Where(p => p.GameId == game.Id).ToListAsync(),
+                IsGameFinished = isGameFinished,
+                Order = nextGameQuestion?.Order ?? 0,
+                TotalQuestions = await db.GameQuestions.CountAsync(gq => gq.GameId == game.Id),
+                Game = game,
+                Question = await db.Questions.FindAsync(game.CurrentQuestionId)
             };
 
         }

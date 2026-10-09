@@ -119,18 +119,16 @@ namespace Api.Endpoints
                 if (result is null) return TypedResults.NotFound();
 
                 await hub.Clients.Group($"game-{id}").UpdateScores(result.Players);
+                if (result.IsGameFinished)
+                {
+                    await hub.Clients.Group($"game-{id}").GameFinished();
+                }
+                else
+                {
+                    await hub.Clients.Group($"game-{id}").ChangeQuestion(result.Question, result.Order, result.TotalQuestions);
+                }
                 return TypedResults.Ok(new { IsCorrect = result.IsCorrect});
             }
-
-            //static async Task<IResult> NextQuestion(QuizLiveDb db, int id,GameService gameService, IHubContext<GameHub, IGameClient> hub)
-            //{
-            //    var question = await gameService.NextQuestion(id);
-            //    if (question is null) return TypedResults.NotFound();
-            //    var game = await db.Games.FindAsync(id);
-            //    if (game is null) return TypedResults.NotFound();
-            //    await hub.Clients.Group($"game-{game.Id}").ChangeQuestion(question);
-            //    return TypedResults.Ok(question);
-            //}
         }
     }
 }

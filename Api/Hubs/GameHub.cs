@@ -8,8 +8,8 @@ public interface IGameClient
     Task PlayerJoined(Player player);
     Task GameStarted(Game game);
     Task UpdateScores(List<Player> players);
-    Task ChangeQuestion(Question question);
-    Task GameFinished(Game game);
+    Task ChangeQuestion(Question question, int order, int totalQuestions);
+    Task GameFinished();
 }
 
 public class GameHub : Hub<IGameClient>

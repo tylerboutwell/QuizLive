@@ -60,6 +60,17 @@ export default function InProgress({ game }: InProgressProps) {
             setPlayers(players);
         });
 
+        connection.on("ChangeQuestion", (question: Question, order: number, totalQuestions: number) => {
+            setSelectedAnswer(null)
+            setQuestion(question);
+            setQuestionOrder(order);
+            setTotalQuestions(totalQuestions);
+        });
+
+        connection.on("GameFinished", () => {
+            router.refresh();
+        });
+
         connection.onreconnected(() => {
             connection.invoke("JoinGame", game.id).catch(console.error);
         });
